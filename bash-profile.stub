@@ -1,0 +1,3 @@
+
+HISTDB='.hist.db'
+source ./.bash-history-sqlite.sh

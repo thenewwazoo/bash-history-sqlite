@@ -4,12 +4,12 @@ HISTSESSION=`dd if=/dev/urandom bs=32 count=1 2>/dev/null | base64`
 
 # This utility requires bash-preexec to function, so get it.
 # n.b. we presume cwd is ~
-if [ ! -f .bash-preexec.sh ]
+if [ ! -f ${HOME}/.bash-preexec.sh ]
 then
-    wget -q -O .bash-preexec.sh 'https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh' 2> /dev/null ||
-    curl -s -o .bash-preexec.sh 'https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh' 2> /dev/null
+    wget -q -O ${HOME}/.bash-preexec.sh 'https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh' 2> /dev/null ||
+    curl -s -o ${HOME}/.bash-preexec.sh 'https://raw.githubusercontent.com/rcaloras/bash-preexec/master/bash-preexec.sh' 2> /dev/null
 fi
-source .bash-preexec.sh
+source ${HOME}/.bash-preexec.sh
 
 # header guard
 [ -n "$_SQLITE_HIST" ] && return || readonly _SQLITE_HIST=1

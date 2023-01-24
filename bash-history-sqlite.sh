@@ -60,7 +60,7 @@ __create_histdb() {
 	fi
 }
 
-preexec() {
+preexec_bash_history_sqlite() {
 	[[ -z ${HISTDB} ]] && return 0
 	local cmd
 	cmd="$1"
@@ -91,7 +91,7 @@ preexec() {
 	echo "$cmd" >> ~/.testlog
 }
 
-precmd() {
+precmd_bash_history_sqlite() {
 	local ret_value="$?"
 	if [[ -n "${LASTHISTID}" ]]; then
 		__create_histdb
@@ -104,3 +104,6 @@ precmd() {
 		EOD
 	fi
 }
+
+preexec_functions+=(preexec_bash_history_sqlite)
+precmd_functions+=(precmd_bash_history_sqlite)

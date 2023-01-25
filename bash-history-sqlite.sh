@@ -19,7 +19,7 @@ source ${HOME}/.bash-preexec.sh
 # TODO figure out how to integrate this with the history builtins
 
 dbhistory() {
-    sqlite3 -separator '#' ${HISTDB} "select command_id, command from command where command like "\""%${@}%"\"";" | awk -F '#' '{printf "%8s    %s\n", $1, $2}'
+    sqlite3 -separator '#' ${HISTDB} "select command_id, command from command where command like "\""%${@}%"\"";" | awk -F'#' '/^[0-9]+#/ {printf "%8s    %s\n", $1, substr($0,index($0,FS)+1); next} { print $0; }'
 }
 
 dbhist() {

@@ -19,7 +19,7 @@ source ${HOME}/.bash-preexec.sh
 # TODO figure out how to integrate this with the history builtins
 
 dbhistory() {
-    sqlite3 -separator '#' ${HISTDB} "select command_id, command from command where command like "\""%${@}%"\"";" | awk -F '#' '{printf "%8s    %s\n", $1, $2}'
+    sqlite3 -separator '#' ${HISTDB} "select command_id, command from command where command like "\""%${@}%"\"";" | awk -F'#' '/^[0-9]+#/ {printf "%8s    %s\n", $1, substr($0,index($0,FS)+1); next} { print $0; }'
 }
 
 dbhist() {
@@ -60,7 +60,7 @@ __create_histdb() {
 	fi
 }
 
-preexec() {
+preexec_bash_history_sqlite() {
 	[[ -z ${HISTDB} ]] && return 0
 	local cmd
 	cmd="$1"
@@ -91,7 +91,7 @@ preexec() {
 	echo "$cmd" >> ~/.testlog
 }
 
-precmd() {
+precmd_bash_history_sqlite() {
 	local ret_value="$?"
 	if [[ -n "${LASTHISTID}" ]]; then
 		__create_histdb
@@ -104,3 +104,6 @@ precmd() {
 		EOD
 	fi
 }
+
+preexec_functions+=(preexec_bash_history_sqlite)
+precmd_functions+=(precmd_bash_history_sqlite)

@@ -19,17 +19,17 @@ source ${HOME}/.bash-preexec.sh
 # TODO figure out how to integrate this with the history builtins
 
 dbhistory() {
-    sqlite3 -separator '#' ${HISTDB} "select command_id, command from command where command like "\""%${@}%"\"";" | awk -F'#' '/^[0-9]+#/ {printf "%8s    %s\n", $1, substr($0,index($0,FS)+1); next} { print $0; }'
+    sqlite3 -separator '#' ${HISTDB} "select command_id, command from command where command like '%${@}%';" | awk -F'#' '/^[0-9]+#/ {printf "%8s    %s\n", $1, substr($0,index($0,FS)+1); next} { print $0; }'
 }
 
 dbhist() {
-    dbhistory $@
+    dbhistory "$@"
 }
 
 # TODO figure out how to make this function rewrite history so the up arrow
 #  (or ^r searches) give you what you ran, and not the dbexec() call.
 dbexec() {
-    bash -c "$(sqlite3 ${HISTDB} "select command from command where command_id="\""${1}"\"";")"
+    bash -c "$(sqlite3 "${HISTDB}" "select command from command where command_id='${1}';")"
 }
 
 
@@ -80,7 +80,7 @@ preexec_bash_history_sqlite() {
 			'bash',
 			$(__quote_str "$cmd"),
 			$(__quote_str "$PWD"),
-			"$(date +%s%3N)",
+			'$(date +%s%3N)',
 			$(__quote_str "$HISTSESSION"),
 			$quotedloginsession
 		);
@@ -97,7 +97,7 @@ precmd_bash_history_sqlite() {
 		__create_histdb
 		sqlite3 "$HISTDB" <<- EOD
 			UPDATE command SET
-				ended="$(date +%s%3N)",
+				ended='$(date +%s%3N)',
 				return=$ret_value
 			WHERE
 				command_id=$LASTHISTID ;
